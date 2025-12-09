@@ -6,7 +6,8 @@ import morgan from 'morgan'
 import routes from './routes'
 import { errorHandler } from './middleware/errorHandler'
 import swaggerUi from 'swagger-ui-express'
-import swaggerDocument from '../docs/swagger.json' assert { type: 'json' }
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const swaggerDocument = require('../docs/swagger.json')
 
 const app = express()
 
