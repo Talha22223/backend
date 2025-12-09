@@ -3,9 +3,9 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 const prisma = new PrismaClient()
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret'
-const ACCESS_EXPIRES = process.env.JWT_ACCESS_EXP || '15m'
-const REFRESH_EXPIRES = process.env.JWT_REFRESH_EXP || '7d'
+const JWT_SECRET: string = process.env.JWT_SECRET || 'secret'
+const ACCESS_EXPIRES = (process.env.JWT_ACCESS_EXP || '15m') as '15m'
+const REFRESH_EXPIRES = (process.env.JWT_REFRESH_EXP || '7d') as '7d'
 
 export async function register(data: { email: string; password: string; name?: string }) {
   const hashed = await bcrypt.hash(data.password, 10)
@@ -31,6 +31,7 @@ export async function login(email: string, password: string) {
 export async function refresh(token: string) {
   const rt = await prisma.refreshToken.findUnique({ where: { token } })
   if (!rt || rt.revoked) throw new Error('Invalid refresh token')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: any = jwt.verify(token, JWT_SECRET)
   const access = jwt.sign({ sub: payload.sub }, JWT_SECRET, { expiresIn: ACCESS_EXPIRES })
   return { access }
