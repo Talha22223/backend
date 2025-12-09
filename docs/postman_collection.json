@@ -1,0 +1,14 @@
+{
+  "info": {
+    "name": "<<PROJECT_NAME>> API"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:4000/health"
+      }
+    }
+  ]
+}
