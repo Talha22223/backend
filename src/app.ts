@@ -6,14 +6,22 @@ import morgan from 'morgan'
 import routes from './routes'
 import { errorHandler } from './middleware/errorHandler'
 import swaggerUi from 'swagger-ui-express'
-import swaggerDocument from '../docs/swagger.json' assert { type: 'json' }
+const swaggerDocument = require('../docs/swagger.json')
 
 const app = express()
 
 app.use(helmet())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors({ origin: true }))
+
+// CORS configuration
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  credentials: true,
+  optionsSuccessStatus: 200
+}
+app.use(cors(corsOptions))
+
 app.use(rateLimit({ windowMs: 60 * 1000, max: 120 }))
 
 app.use(morgan('combined'))

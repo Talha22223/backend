@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
 import * as authService from '../services/auth.service'
 
@@ -8,10 +8,14 @@ const registerSchema = z.object({
   name: z.string().optional()
 })
 
-export const register = async (req: Request, res: Response) => {
-  const parsed = registerSchema.parse(req.body)
-  const user = await authService.register(parsed)
-  res.status(201).json(user)
+export const register = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const parsed = registerSchema.parse(req.body)
+    const user = await authService.register(parsed)
+    res.status(201).json(user)
+  } catch (error) {
+    next(error)
+  }
 }
 
 const loginSchema = z.object({
@@ -19,29 +23,49 @@ const loginSchema = z.object({
   password: z.string().min(6)
 })
 
-export const login = async (req: Request, res: Response) => {
-  const parsed = loginSchema.parse(req.body)
-  const tokens = await authService.login(parsed.email, parsed.password)
-  res.json(tokens)
+export const login = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const parsed = loginSchema.parse(req.body)
+    const tokens = await authService.login(parsed.email, parsed.password)
+    res.json(tokens)
+  } catch (error) {
+    next(error)
+  }
 }
 
-export const refresh = async (req: Request, res: Response) => {
-  const { token } = req.body
-  const tokens = await authService.refresh(token)
-  res.json(tokens)
+export const refresh = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token } = req.body
+    const tokens = await authService.refresh(token)
+    res.json(tokens)
+  } catch (error) {
+    next(error)
+  }
 }
 
-export const logout = async (req: Request, res: Response) => {
-  const { token } = req.body
-  await authService.logout(token)
-  res.status(204).send()
+export const logout = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token } = req.body
+    await authService.logout(token)
+    res.status(204).send()
+  } catch (error) {
+    next(error)
+  }
 }
 
-export const forgotPassword = async (req: Request, res: Response) => {
-  // implement email send
-  res.json({ ok: true })
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // implement email send
+    res.json({ ok: true })
+  } catch (error) {
+    next(error)
+  }
 }
 
-export const resetPassword = async (req: Request, res: Response) => {
-  res.json({ ok: true })
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    res.json({ ok: true })
+  } catch (error) {
+    next(error)
+  }
 }
